@@ -3,7 +3,7 @@ from flask import Flask, render_template, request
 def init_sqlite_db():
     conn = sqlite3.connect('database.db')
     print("Opened database successfully")
-    conn.execute('CREATE TABLE students (name TEXT, addr TEXT, city TEXT, pin TEXT)')
+    conn.execute('CREATE TABLE if not exists students (name TEXT, addr TEXT, city TEXT, pin TEXT)')
     print("Table created successfully")
     conn.close()
 
@@ -14,7 +14,7 @@ app = Flask(__name__)
 def enter_new_student():
     return render_template('student.html')
 
-@app.route('/add-new-record', mehods=['POST'])
+@app.route('/add-new-record/', methods=['POST'])
 def add_new_record():
     if request.method == "POST":
         try:
@@ -29,8 +29,8 @@ def add_new_record():
                 con.commit()
                 msg = "Record successfully added."
         except Exception as e:
-                con.rollback()
-                msg = "Error occurred in insert operation: " + e
+            con.rollback()
+            msg = "Error occurred in insert operation: " + e
         finally:
             con.close()
             return render_template('result.html', msg=msg)
